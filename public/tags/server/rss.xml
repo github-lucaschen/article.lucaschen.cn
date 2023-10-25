@@ -1,0 +1,19 @@
+<?xml version="1.0" encoding="utf-8" standalone="yes"?><rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom"><channel><title>server on Lucas Chen's Archie</title><link>http://www.lucaschen.cn/tags/server/</link><description>Recent content in server on Lucas Chen's Archie</description><generator>Hugo -- gohugo.io</generator><language>zh-CN</language><lastBuildDate>Thu, 05 Jan 2023 00:00:00 +0000</lastBuildDate><atom:link href="http://www.lucaschen.cn/tags/server/rss.xml" rel="self" type="application/rss+xml"/><item><title>Redis 集群(Redis Cluster)</title><link>http://www.lucaschen.cn/posts/redis-cluster/</link><pubDate>Thu, 05 Jan 2023 00:00:00 +0000</pubDate><guid>http://www.lucaschen.cn/posts/redis-cluster/</guid><description>&lt;p>简述如何使用 docker-compose 搭建 3 主 3 从的 Redis 集群。&lt;/p></description></item><item><title>Nginx 基础(Nginx Basic)</title><link>http://www.lucaschen.cn/posts/nginx-basic/</link><pubDate>Wed, 04 Jan 2023 00:00:00 +0000</pubDate><guid>http://www.lucaschen.cn/posts/nginx-basic/</guid><description>&lt;p>How to use nginx easily.&lt;/p>
+&lt;p>The following sections are included:&lt;/p>
+&lt;ol>
+&lt;li>Install&lt;/li>
+&lt;li>Configuration&lt;/li>
+&lt;li>Virtual host&lt;/li>
+&lt;li>Reverse proxy&lt;/li>
+&lt;li>Load balancing&lt;/li>
+&lt;li>Dynamic-Static Separation&lt;/li>
+&lt;li>UrlRewrite&lt;/li>
+&lt;/ol></description></item><item><title>初始化服务器(Initializing Server)</title><link>http://www.lucaschen.cn/posts/initializing-server/</link><pubDate>Tue, 03 Jan 2023 00:00:00 +0000</pubDate><guid>http://www.lucaschen.cn/posts/initializing-server/</guid><description>&lt;p>After reinstalling the system, initialize the centos 7 system.&lt;/p>
+&lt;p>The following sections are included&lt;/p>
+&lt;ol>
+&lt;li>IP address, static IP, host name, host file&lt;/li>
+&lt;li>Firewall Service&lt;/li>
+&lt;li>epel source and yum source&lt;/li>
+&lt;li>user and assign permissions&lt;/li>
+&lt;li>Common tool.(the_silver_searcher, tmux, axel, wget, curl, zsh, oh my zsh, p10k, vim)&lt;/li>
+&lt;/ol></description></item></channel></rss>

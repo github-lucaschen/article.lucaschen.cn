@@ -1,0 +1,9 @@
+<?xml version="1.0" encoding="utf-8" standalone="yes"?><rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom"><channel><title>configuration on Lucas Chen's Archie</title><link>http://www.lucaschen.cn/tags/configuration/</link><description>Recent content in configuration on Lucas Chen's Archie</description><generator>Hugo -- gohugo.io</generator><language>zh-CN</language><lastBuildDate>Tue, 03 Jan 2023 00:00:00 +0000</lastBuildDate><atom:link href="http://www.lucaschen.cn/tags/configuration/rss.xml" rel="self" type="application/rss+xml"/><item><title>初始化服务器(Initializing Server)</title><link>http://www.lucaschen.cn/posts/initializing-server/</link><pubDate>Tue, 03 Jan 2023 00:00:00 +0000</pubDate><guid>http://www.lucaschen.cn/posts/initializing-server/</guid><description>&lt;p>After reinstalling the system, initialize the centos 7 system.&lt;/p>
+&lt;p>The following sections are included&lt;/p>
+&lt;ol>
+&lt;li>IP address, static IP, host name, host file&lt;/li>
+&lt;li>Firewall Service&lt;/li>
+&lt;li>epel source and yum source&lt;/li>
+&lt;li>user and assign permissions&lt;/li>
+&lt;li>Common tool.(the_silver_searcher, tmux, axel, wget, curl, zsh, oh my zsh, p10k, vim)&lt;/li>
+&lt;/ol></description></item></channel></rss>

@@ -1,0 +1,11 @@
+<?xml version="1.0" encoding="utf-8" standalone="yes"?><rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom"><channel><title>nginx on Lucas Chen's Archie</title><link>http://www.lucaschen.cn/tags/nginx/</link><description>Recent content in nginx on Lucas Chen's Archie</description><generator>Hugo -- gohugo.io</generator><language>zh-CN</language><lastBuildDate>Wed, 04 Jan 2023 00:00:00 +0000</lastBuildDate><atom:link href="http://www.lucaschen.cn/tags/nginx/rss.xml" rel="self" type="application/rss+xml"/><item><title>Nginx 基础(Nginx Basic)</title><link>http://www.lucaschen.cn/posts/nginx-basic/</link><pubDate>Wed, 04 Jan 2023 00:00:00 +0000</pubDate><guid>http://www.lucaschen.cn/posts/nginx-basic/</guid><description>&lt;p>How to use nginx easily.&lt;/p>
+&lt;p>The following sections are included:&lt;/p>
+&lt;ol>
+&lt;li>Install&lt;/li>
+&lt;li>Configuration&lt;/li>
+&lt;li>Virtual host&lt;/li>
+&lt;li>Reverse proxy&lt;/li>
+&lt;li>Load balancing&lt;/li>
+&lt;li>Dynamic-Static Separation&lt;/li>
+&lt;li>UrlRewrite&lt;/li>
+&lt;/ol></description></item></channel></rss>
