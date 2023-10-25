@@ -504,7 +504,7 @@ params:
   # Easily browse and edit blog source code online.
   postEdit:
     enable: true
-    url: https://github.com/github-lucaschen/article.lucaschen.cn/main/
+    url: https://github.com/github-lucaschen/article.lucaschen.cn/blob/main/content/
 
   # 设置文本的对齐方式
   # Set the text alignment in posts / pages.
