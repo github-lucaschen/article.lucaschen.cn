@@ -1,5 +1,7 @@
 <?xml version="1.0" encoding="utf-8" standalone="yes"?><rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom"><channel><title>language on Lucas Chen's Archie</title><link>http://www.lucaschen.cn/tags/language/</link><description>Recent content in language on Lucas Chen's Archie</description><generator>Hugo -- gohugo.io</generator><language>zh-CN</language><lastBuildDate>Wed, 25 Oct 2023 22:30:26 +0800</lastBuildDate><atom:link href="http://www.lucaschen.cn/tags/language/rss.xml" rel="self" type="application/rss+xml"/><item><title>OGNL 语言指南(OGNL Language Guide)</title><link>http://www.lucaschen.cn/posts/ognl-language-guide/</link><pubDate>Wed, 25 Oct 2023 22:30:26 +0800</pubDate><guid>http://www.lucaschen.cn/posts/ognl-language-guide/</guid><description>&lt;p>翻译自
 &lt;a href="https://commons.apache.org/dormant/commons-ognl/language-guide.html" title="Apache 官网 OGNL" rel="noopener external nofollow noreferrer" target="_blank" class=" exturl">
-Apache 官网 OGNL
-&lt;i class="fa fa-external-link-alt">&lt;/i>
+ Apache 官网 OGNL
+ 
+ &lt;i class="fa fa-external-link-alt">&lt;/i>
+ 
 &lt;/a>的语言指南。&lt;/p></description></item></channel></rss>
