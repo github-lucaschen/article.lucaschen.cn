@@ -99,10 +99,11 @@ public final class JsonUtil {
         jsonMapper.registerModule(javaTimeModule);
     }
 
+
     public static Optional<String> toJson(final Object object) {
         if (Objects.nonNull(object)) {
             try {
-                return Optional.ofNullable(jsonMapper.writeValueAsString(object));
+                return Optional.of(jsonMapper.writeValueAsString(object));
             } catch (JsonProcessingException e) {
                 log.error("JsonUtil toJson : {}", e);
             }
@@ -113,32 +114,9 @@ public final class JsonUtil {
     public static <T> Optional<T> toObject(final String json, Class<T> clazz) {
         if (StringUtils.isNoneBlank(json) && Objects.nonNull(clazz)) {
             try {
-                return Optional.ofNullable(jsonMapper.readValue(json, clazz));
+                return Optional.of(jsonMapper.readValue(json, clazz));
             } catch (JsonProcessingException e) {
                 log.error("JsonUtil toObject : {}", e);
-            }
-        }
-        return Optional.empty();
-    }
-
-    public static <T> Optional<T> toObject(final String json, TypeReference<T> typeReference) {
-        if (StringUtils.isNoneBlank(json) && Objects.nonNull(typeReference)) {
-            try {
-                return Optional.ofNullable(jsonMapper.readValue(json, typeReference));
-            } catch (JsonProcessingException e) {
-                log.error("JsonUtil toObject : {}", e);
-            }
-        }
-        return Optional.empty();
-    }
-
-    @SuppressWarnings("rawtypes")
-    public static Optional<Map> toMap(final String json) {
-        if (StringUtils.isNoneBlank(json)) {
-            try {
-                return Optional.ofNullable(jsonMapper.readValue(json, Map.class));
-            } catch (JsonProcessingException e) {
-                log.error("JsonUtil toMap : {}", e);
             }
         }
         return Optional.empty();
@@ -148,7 +126,49 @@ public final class JsonUtil {
                                            TypeReference<T> typeReference) {
         if (StringUtils.isNoneBlank(json) && Objects.nonNull(typeReference)) {
             try {
-                return Optional.ofNullable(jsonMapper.readValue(json, typeReference));
+                return Optional.of(jsonMapper.readValue(json, typeReference));
+            } catch (JsonProcessingException e) {
+                log.error("JsonUtil toObject : {}", e);
+            }
+        }
+        return Optional.empty();
+    }
+
+    public static <T> Optional<T> toObject(final Map map, Class<T> clazz) {
+        if (MapUtils.isNotEmpty(map) && Objects.nonNull(clazz)) {
+            return Optional.of(jsonMapper.convertValue(map, clazz));
+        }
+        return Optional.empty();
+    }
+
+    @SuppressWarnings("rawtypes")
+    public static Optional<Map> toMap(final String json) {
+        if (StringUtils.isNoneBlank(json)) {
+            try {
+                return Optional.ofNullable(jsonMapper.readValue(json,
+                        new TypeReference<Map<String, Object>>() {
+                        }));
+            } catch (JsonProcessingException e) {
+                log.error("JsonUtil toMap : {}", e);
+            }
+        }
+        return Optional.empty();
+    }
+
+    @SuppressWarnings("rawtypes")
+    public static Optional<Map> toMap(final Object object) {
+        if (Objects.nonNull(object)) {
+            return Optional.of(jsonMapper.convertValue(object,
+                    new TypeReference<Map<String, Object>>() {
+                    }));
+        }
+        return Optional.empty();
+    }
+
+    public static <T> Optional<List<T>> toObjects(final String json, TypeReference<List<T>> typeReference) {
+        if (StringUtils.isNoneBlank(json) && Objects.nonNull(typeReference)) {
+            try {
+                return Optional.of(jsonMapper.readValue(json, typeReference));
             } catch (JsonProcessingException e) {
                 log.error("JsonUtil toObjects : {}", e);
             }
@@ -159,14 +179,13 @@ public final class JsonUtil {
     public static Optional<JsonNode> toTree(final String json) {
         if (StringUtils.isNoneBlank(json)) {
             try {
-                return Optional.ofNullable(jsonMapper.readTree(json));
+                return Optional.of(jsonMapper.readTree(json));
             } catch (JsonProcessingException e) {
                 log.error("JsonUtil toTree : {}", e);
             }
         }
         return Optional.empty();
     }
-
 }
 ```
 
@@ -429,7 +448,7 @@ public final class JsonUtil {
     public static Optional<String> toJson(final Object object) {
         if (Objects.nonNull(object)) {
             try {
-                return Optional.ofNullable(jsonMapper.writeValueAsString(object));
+                return Optional.of(jsonMapper.writeValueAsString(object));
             } catch (JsonProcessingException e) {
                 log.error("JsonUtil toJson : {}", e);
             }
@@ -463,7 +482,7 @@ public final class JsonUtil {
     public static <T> Optional<T> toObject(final String json, Class<T> clazz) {
         if (StringUtils.isNoneBlank(json) && Objects.nonNull(clazz)) {
             try {
-                return Optional.ofNullable(jsonMapper.readValue(json, clazz));
+                return Optional.of(jsonMapper.readValue(json, clazz));
             } catch (JsonProcessingException e) {
                 log.error("JsonUtil toObject : {}", e);
             }
@@ -486,6 +505,22 @@ public final class JsonUtil {
     }
 ```
 
+#### toObject(final String json, TypeReference<T> typeReference)
+
+```java
+    public static <T> Optional<T> toObject(final String json,
+                                           TypeReference<T> typeReference) {
+        if (StringUtils.isNoneBlank(json) && Objects.nonNull(typeReference)) {
+            try {
+                return Optional.of(jsonMapper.readValue(json, typeReference));
+            } catch (JsonProcessingException e) {
+                log.error("JsonUtil toObject : {}", e);
+            }
+        }
+        return Optional.empty();
+    }
+```
+
 测试方法:
 
 ```java
@@ -501,23 +536,31 @@ public final class JsonUtil {
     }
 ```
 
-#### toObject(final String json, TypeReference<T> typeReference)
+#### toObject(final Map map, Class<T> clazz)
 
 ```java
-    public static <T> Optional<T> toObject(final String json,
-                                           TypeReference<T> typeReference) {
-        if (StringUtils.isNoneBlank(json) && Objects.nonNull(typeReference)) {
-            try {
-                return Optional.ofNullable(jsonMapper.readValue(json, typeReference));
-            } catch (JsonProcessingException e) {
-                log.error("JsonUtil toObject : {}", e);
-            }
+    public static <T> Optional<T> toObject(final Map map, Class<T> clazz) {
+        if (MapUtils.isNotEmpty(map) && Objects.nonNull(clazz)) {
+            return Optional.of(jsonMapper.convertValue(map, clazz));
         }
         return Optional.empty();
     }
 ```
 
-测试方法:
+测试代码:
+
+```java
+    @Test
+    void toObjectFromMap() {
+        final ImmutableMap<String, String> immutableMap = ImmutableMap
+                .of("k2", "v2", "username", "username", "password", "password");
+        final UserPO userPO = JsonUtil.toObject(immutableMap, UserPO.class).orElse(null);
+        assertTrue(Objects.nonNull(userPO));
+        assertNull(userPO.getId());
+        assertEquals("username", userPO.getUsername());
+        assertEquals("password", userPO.getPassword());
+    }
+```
 
 #### toMap(final String json)
 
@@ -526,7 +569,9 @@ public final class JsonUtil {
     public static Optional<Map> toMap(final String json) {
         if (StringUtils.isNoneBlank(json)) {
             try {
-                return Optional.ofNullable(jsonMapper.readValue(json, Map.class));
+                return Optional.ofNullable(jsonMapper.readValue(json,
+                        new TypeReference<Map<String, Object>>() {
+                        }));
             } catch (JsonProcessingException e) {
                 log.error("JsonUtil toMap : {}", e);
             }
@@ -549,13 +594,41 @@ public final class JsonUtil {
     }
 ```
 
+#### toMap(final Object object)
+
+```java
+    @SuppressWarnings("rawtypes")
+    public static Optional<Map> toMap(final Object object) {
+        if (Objects.nonNull(object)) {
+            return Optional.of(jsonMapper.convertValue(object,
+                    new TypeReference<Map<String, Object>>() {
+                    }));
+        }
+        return Optional.empty();
+    }
+```
+
+测试代码:
+
+```java
+    @Test
+    void toMapFromObject() {
+        final UserPO admin1 = UserPO.builder().id(null).username("username").password("password").build();
+        final Map map = JsonUtil.toMap(admin1).orElse(null);
+        assertTrue(Objects.nonNull(map));
+        assertNull(map.get("id"));
+        assertEquals("username", map.get("username"));
+        assertEquals("password", map.get("password"));
+    }
+```
+
 #### toObjects(final String json, TypeReference<List<T>> typeReference)
 
 ```java
     public static <T> Optional<List<T>> toObjects(final String json, TypeReference<List<T>> typeReference) {
         if (StringUtils.isNoneBlank(json) && Objects.nonNull(typeReference)) {
             try {
-                return Optional.ofNullable(jsonMapper.readValue(json, typeReference));
+                return Optional.of(jsonMapper.readValue(json, typeReference));
             } catch (JsonProcessingException e) {
                 log.error("JsonUtil toObjects : {}", e);
             }
@@ -585,10 +658,10 @@ public final class JsonUtil {
 #### toTree(final String json)
 
 ```java
-    public static Optional<JsonNode> toTree(final String json) {
+   public static Optional<JsonNode> toTree(final String json) {
         if (StringUtils.isNoneBlank(json)) {
             try {
-                return Optional.ofNullable(jsonMapper.readTree(json));
+                return Optional.of(jsonMapper.readTree(json));
             } catch (JsonProcessingException e) {
                 log.error("JsonUtil toTree : {}", e);
             }
