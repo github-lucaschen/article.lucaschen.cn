@@ -1,7 +1,0 @@
-<?xml version="1.0" encoding="utf-8" standalone="yes"?><rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom"><channel><title>front-end on Lucas Chen's Archie</title><link>http://www.lucaschen.cn/tags/front-end/</link><description>Recent content in front-end on Lucas Chen's Archie</description><generator>Hugo -- gohugo.io</generator><language>zh-CN</language><lastBuildDate>Sun, 08 Jan 2023 00:00:00 +0000</lastBuildDate><atom:link href="http://www.lucaschen.cn/tags/front-end/rss.xml" rel="self" type="application/rss+xml"/><item><title>前端模块化(Front End Modularization)</title><link>http://www.lucaschen.cn/posts/front-end-modularization/</link><pubDate>Sun, 08 Jan 2023 00:00:00 +0000</pubDate><guid>http://www.lucaschen.cn/posts/front-end-modularization/</guid><description>&lt;p>前端模块化详解&lt;/p>
-&lt;p>包含以下部分：&lt;/p>
-&lt;ol>
-&lt;li>模块化的理解&lt;/li>
-&lt;li>模块化的规范&lt;/li>
-&lt;li>CommonJS, AMD, ES6&lt;/li>
-&lt;/ol></description></item></channel></rss>
