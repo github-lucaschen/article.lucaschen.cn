@@ -22,9 +22,20 @@ jobs:
                 hugo-version: 'latest'
                 extended: true
 
+
             - name: Build
               run: hugo --minify
 
             - name: List files in the repository
               run: |
                 ls ${{ github.workspace }}
+            
+            - name: copy file via ssh password
+              uses: appleboy/scp-action@v0.1.7
+              with:
+                host: ${{ secrets.HOST }}
+                username: ${{ secrets.USERNAME }}
+                password: ${{ secrets.PASSWORD }}
+                port: ${{ secrets.PORT }}
+                source: "./public"
+                target: "~/article"
