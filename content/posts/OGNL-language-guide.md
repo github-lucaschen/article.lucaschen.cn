@@ -1,16 +1,14 @@
 ---
-author: Lucas Chen
 title: 'OGNL 语言指南(OGNL Language Guide)'
-date: 2023-10-25T22:30:26+08:00
-description: >-
-  OGNL 语言指南
-tags:
-  - language
-  - OGNL
+description: 'OGNL 语言指南'
+keywords: 'OGNL'
+
+date: 2023-10-25T21:46:25+08:00
+
 categories:
   - language
-  - en-US
-series:
+tags:
+  - language
   - OGNL
 ---
 

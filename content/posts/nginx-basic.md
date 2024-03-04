@@ -1,16 +1,14 @@
 ---
-author: Lucas Chen
 title: 'Nginx 基础(Nginx Basic)'
-date: 2023-01-04
-description: >-
-  How to use nginx easily.
-tags:
-  - server
-  - nginx
+description: 'How to use nginx easily'
+keywords: 'nginx'
+
+date: 2023-12-10T21:46:25+08:00
+
 categories:
   - server
-  - en-US
-series:
+tags:
+  - server
   - nginx
 ---
 

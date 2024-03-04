@@ -1,18 +1,16 @@
 ---
-author: Lucas Chen
-title: 初始化服务器(Initializing Server)
-date: 2023-01-03
-description: >-
-  Initialize the server.
+title: '初始化服务器(Initializing Server)'
+description: 'Initialize the server.'
+keywords: '初始化,服务器'
+
+date: 2023-01-03T21:46:25+08:00
+
+categories:
+  - configuration
 tags:
   - server
   - configuration
   - centos 7
-categories:
-  - configuration
-  - en-US
-series:
-  - Linux
 ---
 
 After reinstalling the system, initialize the centos 7 system.

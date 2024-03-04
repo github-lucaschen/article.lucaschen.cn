@@ -1,17 +1,15 @@
 ---
-author: Lucas Chen
 title: 'Redis 集群(Redis Cluster)'
-date: 2023-01-05
-description: >-
-  简述如何使用 docker-compose 搭建 3 主 3 从的 Redis 集群。
+description: '简述如何使用 docker-compose 搭建 3 主 3 从的 Redis 集群'
+keywords: 'redis'
+
+date: 2023-01-05T21:46:25+08:00
+
+categories:
+  - server
 tags:
   - server
   - redis
-categories:
-  - server
-  - zh-CN
-series:
-  - series
 ---
 
 简述如何使用 docker-compose 搭建 3 主 3 从的 Redis 集群。

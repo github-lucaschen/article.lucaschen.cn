@@ -1,19 +1,17 @@
 ---
-author: Lucas Chen
 title: '前端模块化(Front End Modularization)'
-date: 2023-01-08
-description: >-
-  前端模块化详解
+description: '前端模块化详解'
+keywords: '前端模块化,front-end'
+
+date: 2023-01-08T21:46:25+08:00
+
+categories:
+  - front-end
 tags:
   - reprint
   - unknown
   - front-end
   - module
-categories:
-  - front-end
-  - zh-CN
-series:
-  - Front End Modularization
 ---
 
 前端模块化详解

@@ -1,18 +1,16 @@
 ---
-author: Lucas Chen
-title: "Maven"
-date: 2023-01-06
-description: >-
-  Maven 相关知识总结。
+title: 'Maven'
+description: 'Maven 相关知识总结'
+keywords: 'maven'
+
+date: 2023-01-6T21:46:25+08:00
+
+categories:
+  - java
 tags:
   - reprint
   - unknown
   - java
-  - maven
-categories:
-  - java
-  - en-US
-series:
   - maven
 ---
 

@@ -1,17 +1,15 @@
 ---
-author: Lucas Chen
 title: '中文技术文档的写作规范(Document Style Guide)'
-date: 2023-01-01
-description: >-
-  中文技术文档的写作规范
+description: '中文技术文档的写作规范'
+keywords: '中文技术文档'
+
+date: 2023-01-01T21:46:25+08:00
+
+categories:
+  - guide
 tags:
   - reprint
   - document
-categories:
-  - guide
-  - zh-CN
-series:
-  - document style guide
 ---
 
 中文技术文档的写作规范

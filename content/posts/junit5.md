@@ -1,17 +1,15 @@
 ---
-author: Lucas Chen
 title: 'Junit5 使用手册'
-date: 2023-01-09
-description: >-
-  Junit5 使用手册
+description: 'Java 基准测试'
+keywords: 'java,junit5'
+
+date: 2023-12-10T21:46:25+08:00
+
+categories:
+  - java
 tags:
   - reprint
   - java
-  - junit5
-categories:
-  - java
-  - zh-CN
-series:
   - junit5
 ---
 

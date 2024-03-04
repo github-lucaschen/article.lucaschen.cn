@@ -1,14 +1,15 @@
 ---
-author: Lucas Chen
 title: 'Jackson Util'
-date: 2023-12-17
-description: >-
-  Jackson 封装 JsonUtil
-tags:
-  - jackson
-  - json
+description: 'Jackson 封装 JsonUtil'
+keywords: 'jackson,json'
+
+date: 2023-12-17T21:46:25+08:00
+
 categories:
   - java
+  - json
+tags:
+  - jackson
   - json
 ---
 
