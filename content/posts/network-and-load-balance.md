@@ -144,7 +144,7 @@ tags:
 
 数据封装情况：
 
-![k8s-architecture](/imgs/posts/network-and-load-balance/UDP_encapsulation.svg.png)
+![UDP_encapsulation](/imgs/posts/network-and-load-balance/UDP_encapsulation.svg.png)
 
 ## OSI & TCP/IP
 
