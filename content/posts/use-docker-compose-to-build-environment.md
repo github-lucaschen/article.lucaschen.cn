@@ -1676,3 +1676,103 @@ docker restart elasticsearch8
 ```url
 http://localhost:5601/app/home#/
 ```
+
+## Configuration center
+
+### nacos
+
+**Step 1:** Create directories and files
+
+```shell
+mkdir logs
+touch docker-compose.yml nacos-standlone-mysql.env
+```
+
+**Step 2:** Create database and run script
+
+```shell
+# Choose the right tag
+# https://github.com/alibaba/nacos/blob/2.2.0/distribution/conf/mysql-schema.sql
+```
+
+**Step 3:** Fill in the contents of the file according to the example below
+
+> docker-compose.yml
+
+```yml
+version: "3"
+services:
+  nacos:
+    image: nacos/nacos-server:v2.2.0
+    container_name: nacos-standalone-mysql
+    env_file:
+      - ./nacos-standlone-mysql.env
+    volumes:
+      - ./logs/:/home/nacos/logs
+    ports:
+      - "8848:8848"
+      - "9848:9848"
+      - "9555:9555"
+    restart: always
+```
+
+> nacos-standlone-mysql.env
+
+```env
+PREFER_HOST_MODE=ip
+MODE=standalone
+SPRING_DATASOURCE_PLATFORM=mysql
+MYSQL_SERVICE_HOST=192.168.100.101
+MYSQL_SERVICE_DB_NAME=nacos
+MYSQL_SERVICE_PORT=3306
+MYSQL_SERVICE_USER=root
+MYSQL_SERVICE_PASSWORD=lucas
+MYSQL_SERVICE_DB_PARAM=characterEncoding=utf8&connectTimeout=1000&socketTimeout=3000&autoReconnect=true&useSSL=false&allowPublicKeyRetrieval=true
+```
+
+**Step 4:** Start container
+
+```shell
+sudo docker-compose up -d
+```
+
+### sentinel
+
+**Step 1:** Create directories and files
+
+```shell
+mkdir logs
+touch docker-compose.yml Dockerfile
+# https://github.com/alibaba/Sentinel/releases
+wget https://github.com/alibaba/Sentinel/releases/download/1.8.7/sentinel-dashboard-1.8.7.jar
+```
+
+**Step 2:** Fill in the contents of the file according to the example below
+
+> docker-compose.yml
+
+```yml
+version: '3'
+services:
+  sentinel:
+    build:
+      context: ./
+      dockerfile: Dockerfile
+    image: sentinel
+    container_name: sentinel
+    ports:
+      - "8080:8080"
+    volumes:
+      - ./logs/:/root/logs
+    restart: always
+
+```
+
+> Dockerfile
+
+```dockerfile
+FROM openjdk:8-jre-slim
+ADD sentinel-dashboard-1.8.7.jar sentinel-dashboard.jar
+EXPOSE 8080
+ENTRYPOINT ["java", "-Dserver.port=8080", "-Dcsp.sentinel.dashboard.server=localhost:8080", "-Dproject.name=sentinel-dashboard", "-jar", "sentinel-dashboard.jar"]
+```
