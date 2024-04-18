@@ -16,9 +16,7 @@ Use docker-compose to build various development environments.
 
 <!--more-->
 
-## Database
-
-### mysql
+## MySQL
 
 **Step 1:** Create directories and files
 
@@ -81,7 +79,7 @@ services:
 sudo docker-compose up -d
 ```
 
-### redis
+## Redis
 
 **Step 1:** Create directories and files
 
@@ -114,7 +112,7 @@ touch redis.conf docker-compose.yml
 #
 # units are case insensitive so 1GB 1Gb 1gB are all the same.
 
-################################## INCLUDES ###################################
+####################### INCLUDES ########################
 
 # Include one or more other config files here.  This is useful if you
 # have a standard template that goes to all Redis servers but also need
@@ -132,7 +130,7 @@ touch redis.conf docker-compose.yml
 # include /path/to/local.conf
 # include /path/to/other.conf
 
-################################## MODULES #####################################
+####################### MODULES #########################
 
 # Load modules at startup. If the server is not able to load modules
 # it will abort. It is possible to use multiple loadmodule directives.
@@ -140,7 +138,7 @@ touch redis.conf docker-compose.yml
 # loadmodule /path/to/my_module.so
 # loadmodule /path/to/other_module.so
 
-################################## NETWORK #####################################
+####################### NETWORK #########################
 
 # By default, if no "bind" configuration directive is specified, Redis listens
 # for connections from all the network interfaces available on the server.
@@ -226,7 +224,7 @@ timeout 0
 # Redis default starting with Redis 3.2.1.
 tcp-keepalive 300
 
-################################# GENERAL #####################################
+###################### GENERAL #########################
 
 # By default Redis does not run as a daemon. Use 'yes' if you need it.
 # Note that Redis will write a pid file in /var/run/redis.pid when daemonized.
@@ -290,7 +288,7 @@ databases 16
 # ASCII art logo in startup logs by setting the following option to yes.
 always-show-logo yes
 
-################################ SNAPSHOTTING  ################################
+###################### SNAPSHOTTING  ######################
 #
 # Save the DB on disk:
 #
@@ -359,7 +357,7 @@ dbfilename dump.rdb
 # Note that you must specify a directory here, not a file name.
 dir ./
 
-################################# REPLICATION #################################
+###################### REPLICATION ######################
 
 # Master-Replica replication. Use replicaof to make a Redis instance a copy of
 # another Redis server. A few things to understand ASAP about Redis replication.
@@ -588,7 +586,7 @@ replica-priority 100
 # replica-announce-ip 5.5.5.5
 # replica-announce-port 1234
 
-################################## SECURITY ###################################
+####################### SECURITY ########################
 
 # Require clients to issue AUTH <PASSWORD> before processing any other
 # commands.  This might be useful in environments in which you do not trust
@@ -622,7 +620,7 @@ requirepass lucas
 # Please note that changing the name of commands that are logged into the
 # AOF file or transmitted to replicas may cause problems.
 
-################################### CLIENTS ####################################
+######################## CLIENTS ########################
 
 # Set the max number of connected clients at the same time. By default
 # this limit is set to 10000 clients, however if the Redis server is not
@@ -635,7 +633,7 @@ requirepass lucas
 #
 # maxclients 10000
 
-############################## MEMORY MANAGEMENT ################################
+#################### MEMORY MANAGEMENT ######################
 
 # Set a memory usage limit to the specified amount of bytes.
 # When the memory limit is reached Redis will try to remove keys
@@ -724,7 +722,7 @@ requirepass lucas
 #
 # replica-ignore-maxmemory yes
 
-############################# LAZY FREEING ####################################
+#################### LAZY FREEING ########################
 
 # Redis has two primitives to delete keys. One is called DEL and is a blocking
 # deletion of the object. It means that the server stops processing new commands
@@ -773,7 +771,7 @@ lazyfree-lazy-expire no
 lazyfree-lazy-server-del no
 replica-lazy-flush no
 
-############################## APPEND ONLY MODE ###############################
+#################### APPEND ONLY MODE #####################
 
 # By default Redis asynchronously dumps the dataset on disk. This mode is
 # good enough in many applications, but an issue with the Redis process or
@@ -902,7 +900,7 @@ aof-load-truncated yes
 # tail.
 aof-use-rdb-preamble yes
 
-################################ LUA SCRIPTING  ###############################
+###################### LUA SCRIPTING  #####################
 
 # Max execution time of a Lua script in milliseconds.
 #
@@ -920,7 +918,7 @@ aof-use-rdb-preamble yes
 # Set it to 0 or a negative value for unlimited execution without warnings.
 lua-time-limit 5000
 
-################################ REDIS CLUSTER  ###############################
+###################### REDIS CLUSTER  #####################
 
 # Normal Redis instances can't be part of a Redis Cluster; only nodes that are
 # started as cluster nodes can. In order to start a Redis instance as a
@@ -1032,7 +1030,7 @@ lua-time-limit 5000
 # In order to setup your cluster make sure to read the documentation
 # available at http://redis.io web site.
 
-########################## CLUSTER DOCKER/NAT support  ########################
+################## CLUSTER DOCKER/NAT support  ################
 
 # In certain deployments, Redis Cluster nodes address discovery fails, because
 # addresses are NAT-ted or because ports are forwarded (the typical case is
@@ -1065,7 +1063,7 @@ lua-time-limit 5000
 # cluster-announce-port 6379
 # cluster-announce-bus-port 6380
 
-################################## SLOW LOG ###################################
+####################### SLOW LOG ########################
 
 # The Redis Slow Log is a system to log queries that exceeded a specified
 # execution time. The execution time does not include the I/O operations
@@ -1089,7 +1087,7 @@ slowlog-log-slower-than 10000
 # You can reclaim memory used by the slow log with SLOWLOG RESET.
 slowlog-max-len 128
 
-################################ LATENCY MONITOR ##############################
+###################### LATENCY MONITOR ####################
 
 # The Redis latency monitoring subsystem samples different operations
 # at runtime in order to collect data related to possible sources of
@@ -1110,7 +1108,7 @@ slowlog-max-len 128
 # "CONFIG SET latency-monitor-threshold <milliseconds>" if needed.
 latency-monitor-threshold 0
 
-############################# EVENT NOTIFICATION ##############################
+#################### EVENT NOTIFICATION ####################
 
 # Redis can notify Pub/Sub clients about events happening in the key space.
 # This feature is documented at http://redis.io/topics/notifications
@@ -1156,7 +1154,7 @@ latency-monitor-threshold 0
 #  specify at least one of K or E, no events will be delivered.
 notify-keyspace-events ""
 
-############################### ADVANCED CONFIG ###############################
+##################### ADVANCED CONFIG #####################
 
 # Hashes are encoded using a memory efficient data structure when they have a
 # small number of entries, and the biggest entry does not exceed a given
@@ -1401,7 +1399,7 @@ rdb-save-incremental-fsync yes
 # lfu-log-factor 10
 # lfu-decay-time 1
 
-########################### ACTIVE DEFRAGMENTATION #######################
+################## ACTIVE DEFRAGMENTATION ################
 #
 # WARNING THIS FEATURE IS EXPERIMENTAL. However it was stress tested
 # even in production and manually tested by multiple engineers for some
@@ -1501,7 +1499,7 @@ services:
 sudo docker-compose up -d
 ```
 
-### postgres
+## PostgreSQL
 
 **Step 1:** Create directories and files
 
@@ -1542,9 +1540,7 @@ services:
 sudo docker-compose up -d
 ```
 
-## Message queue
-
-### RabbitMQ
+## RabbitMQ
 
 **Step 1:** Create directories and files
 
@@ -1597,9 +1593,7 @@ http://localhost:15672/
 
 Then you can use your own username and password login in.
 
-## Search Engine
-
-### ElasticSearch
+## ElasticSearch
 
 **Step 1:** Create directories and files
 
@@ -1617,8 +1611,8 @@ touch docker-compose.yml
 version: '3'
 services:
   elasticsearch:
-    container_name: elasticsearch8
-    image: elasticsearch:8.6.1
+    container_name: elasticsearch7
+    image: elasticsearch:7.17.3
     restart: always
     environment:
       - 'cluster.name=elasticsearch'
@@ -1633,11 +1627,11 @@ services:
       - ./data:/usr/share/elasticsearch/data
       - ./plugins:/usr/share/elasticsearch/plugins
   kibana:
-    container_name: kibana8
-    image: kibana:8.6.1
+    container_name: kibana7
+    image: kibana:7.17.3
     restart: always
     environment:
-      - ELASTICSEARCH_HOSTS=http://elasticsearch8:9200
+      - ELASTICSEARCH_HOSTS=http://elasticsearch7:9200
     depends_on:
       - elasticsearch
     ports:
@@ -1659,10 +1653,10 @@ sudo docker-compose up -d
 **Step 4** Install ik
 
 ```shell
-docker exec -it elasticsearch8 /bin/bash
-./bin/elasticsearch-plugin install https://github.com/medcl/elasticsearch-analysis-ik/releases/download/v8.6.1/elasticsearch-analysis-ik-8.6.1.zip
+docker exec -it elasticsearch7 /bin/bash
+./bin/elasticsearch-plugin install https://github.com/medcl/elasticsearch-analysis-ik/releases/download/v7.17.3/elasticsearch-analysis-ik-7.17.3.zip
 exit
-docker restart elasticsearch8
+docker restart elasticsearch7
 ```
 
 > **Tips**
@@ -1677,9 +1671,7 @@ docker restart elasticsearch8
 http://localhost:5601/app/home#/
 ```
 
-## Configuration center
-
-### nacos
+## Nacos
 
 **Step 1:** Create directories and files
 
@@ -1700,7 +1692,7 @@ touch docker-compose.yml nacos-standlone-mysql.env
 > docker-compose.yml
 
 ```yml
-version: "3"
+version: '3'
 services:
   nacos:
     image: nacos/nacos-server:v2.2.0
@@ -1710,9 +1702,9 @@ services:
     volumes:
       - ./logs/:/home/nacos/logs
     ports:
-      - "8848:8848"
-      - "9848:9848"
-      - "9555:9555"
+      - '8848:8848'
+      - '9848:9848'
+      - '9555:9555'
     restart: always
 ```
 
@@ -1736,7 +1728,7 @@ MYSQL_SERVICE_DB_PARAM=characterEncoding=utf8&connectTimeout=1000&socketTimeout=
 sudo docker-compose up -d
 ```
 
-### sentinel
+## Sentinel
 
 **Step 1:** Create directories and files
 
@@ -1761,11 +1753,10 @@ services:
     image: sentinel
     container_name: sentinel
     ports:
-      - "8080:8080"
+      - '8080:8080'
     volumes:
       - ./logs/:/root/logs
     restart: always
-
 ```
 
 > Dockerfile
@@ -1775,4 +1766,37 @@ FROM openjdk:8-jre-slim
 ADD sentinel-dashboard-1.8.7.jar sentinel-dashboard.jar
 EXPOSE 8080
 ENTRYPOINT ["java", "-Dserver.port=8080", "-Dcsp.sentinel.dashboard.server=localhost:8080", "-Dproject.name=sentinel-dashboard", "-jar", "sentinel-dashboard.jar"]
+```
+
+## ZooKeeper
+
+**Step 1:** Create directories and files
+
+```shell
+mkdir logs data
+touch docker-compose.yml Dockerfile
+```
+
+**Step 2:** Fill in the contents of the file according to the example below
+
+> docker-compose.yml
+
+```yml
+version: '3'
+services:
+  zookeeper:
+    image: zookeeper:3.8.1
+    container_name: zookeeper
+    ports:
+      - '2181:2181'
+    volumes:
+      - ./data:/data
+      - ./logs:/datalog
+    restart: always
+```
+
+**Step 3:** Start container
+
+```shell
+sudo docker-compose up -d
 ```
