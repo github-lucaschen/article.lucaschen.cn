@@ -1593,14 +1593,19 @@ http://localhost:15672/
 
 Then you can use your own username and password login in.
 
-## ElasticSearch
+## (ELK) ElasticSearch Kibana Logstash
 
 **Step 1:** Create directories and files
 
 ```shell
-mkdir data plugins
-chmod 777 data/ plugins/
+mkdir elasticsearch kibana logstash
 touch docker-compose.yml
+mkdir elasticsearch/config elasticsearch/data elasticsearch/logs elasticsearch/plugins
+touch elasticsearch/config/elasticsearch.yml
+mkdir kibana/config
+touch kibana/config/kibana.yml
+mkdir logstash/pipeline
+touch logstash/logstash.yml logstash/pipelines.yml logstash/pipeline/babu-log.conf
 ```
 
 **Step 2:** Fill in the contents of the file according to the example below
@@ -1615,34 +1620,142 @@ services:
     image: elasticsearch:7.17.3
     restart: always
     environment:
-      - 'cluster.name=elasticsearch'
-      - 'discovery.type=single-node'
-      - 'ES_JAVA_OPTS=-Xms512m -Xmx1024m'
-      - ELASTIC_USERNAME=elastic
-      - ELASTIC_PASSWORD=lucas
-      - xpack.security.enabled=false
+      ES_JAVA_OPTS: '-Xms512m -Xmx1024m'
+      TAKE_FILE_OWNERSHIP: 'true'
+      discovery.type: single-node
+      ELASTIC_PASSWORD: 'elastic'
     ports:
       - 9200:9200
+      - 9300:9300
     volumes:
-      - ./data:/usr/share/elasticsearch/data
-      - ./plugins:/usr/share/elasticsearch/plugins
+      - /etc/localtime:/etc/localtime
+      - ./elasticsearch/data:/usr/share/elasticsearch/data
+      - ./elasticsearch/logs:/usr/share/elasticsearch/logs
+      - ./elasticsearch/plugins:/usr/share/elasticsearch/plugins
+      - ./elasticsearch/config/elasticsearch.yml:/usr/share/elasticsearch/config/elasticsearch.yml
   kibana:
     container_name: kibana7
     image: kibana:7.17.3
     restart: always
-    environment:
-      - ELASTICSEARCH_HOSTS=http://elasticsearch7:9200
+    volumes:
+      - ./kibana/config/kibana.yml:/usr/share/kibana/config/kibana.yml
     depends_on:
       - elasticsearch
     ports:
       - 5601:5601
+  logstash:
+    container_name: logstash7
+    image: logstash:7.17.3
+    restart: always
+    environment:
+      LS_JAVA_OPTS: -Xms1024m -Xmx1024m
+      TZ: Asia/Shanghai
+      MONITORING_ENABLED: false
+    volumes:
+      - ./logstash/logstash.yml:/usr/share/logstash/config/logstash.yml
+      - ./logstash/pipelines.yml:/usr/share/logstash/config/pipelines.yml
+      - ./logstash/pipeline:/usr/share/logstash/pipeline
+    depends_on:
+      - elasticsearch
+networks:
+  default:
+    external: true
+    name: custom_network
 ```
 
-> **Tips:**
->
-> change the value of `ELASTIC_USERNAME` to your own username.
->
-> change the value of `ELASTIC_PASSWORD` to your own password.
+> elasticsearch/config/elasticsearch.yml
+
+```yaml
+cluster:
+  name: 'elasticsearch'
+discovery:
+  type: single-node
+http:
+  cors:
+    allow-headers: Authorization
+    allow-origin: '*'
+    enabled: true
+  port: 9200
+network:
+  host: 0.0.0.0
+xpack:
+  security:
+    enabled: true
+    transport:
+      ssl:
+        enabled: true
+```
+
+> kibana/config/kibana.yml
+
+```yaml
+elasticsearch:
+  hosts:
+    - 'http://elasticsearch7:9200'
+  password: 'elastic'
+  username: 'elastic'
+server:
+  host: '0.0.0.0'
+  name: kibana
+xpack:
+  monitoring:
+    ui:
+      container:
+        elasticsearch:
+          enabled: true
+```
+
+> logstash/logstash.yml
+
+```yaml
+http:
+  host: '0.0.0.0'
+xpack:
+  monitoring:
+    elasticsearch:
+      hosts:
+        - 'elasticsearch:9200'
+      password: 'elastic'
+      username: 'elastic'
+    enabled: true
+```
+
+> logstash/pipelines.yml
+
+```shell
+- pipeline.id: babu-log
+  path.config: '/usr/share/logstash/pipeline/babu-log.conf'
+```
+
+> logstash/pipeline/babu-log.conf
+
+```conf
+input {
+  rabbitmq{
+    host => "rabbitmq3"
+    port => 5672
+    exchange => "logs"
+    exchange_type => "topic"
+    durable => true
+    key => "#"
+    queue => "logstash"
+    type => "logstash"
+    codec => "json"
+    metadata_enabled => false
+    user => "rabbit"
+    password => "lucas"
+  }
+}
+output {
+  elasticsearch {
+    hosts => ["elasticsearch7:9200"]
+    index => "babu-log-%{+YYYY-MM}"
+    user => "elastic"
+    password => "elastic"
+    ssl_certificate_verification => false
+  }
+}
+```
 
 **Step 3:** Start container
 
@@ -1824,6 +1937,8 @@ services:
     environment:
       - STORAGE_TYPE=elasticsearch
       - ES_HOSTS=http://elasticsearch7:9200
+      - ES_USERNAME=elastic
+      - ES_PASSWORD=elastic
       - RABBIT_ADDRESSES=rabbitmq3:5672
       - RABBIT_USER=rabbit
       - RABBIT_PASSWORD=lucas
