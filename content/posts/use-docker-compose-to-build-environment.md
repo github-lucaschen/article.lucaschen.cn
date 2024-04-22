@@ -1561,7 +1561,7 @@ services:
   rabbitmq:
     restart: always
     image: rabbitmq:3-management
-    container_name: rabbitmq
+    container_name: rabbitmq3
     environment:
       - RABBITMQ_DEFAULT_USER=rabbit
       - RABBITMQ_DEFAULT_PASS=lucas
@@ -1786,13 +1786,49 @@ version: '3'
 services:
   zookeeper:
     image: zookeeper:3.8.1
-    container_name: zookeeper
+    container_name: zookeeper3
     ports:
       - '2181:2181'
     volumes:
       - ./data:/data
       - ./logs:/datalog
     restart: always
+```
+
+**Step 3:** Start container
+
+```shell
+sudo docker-compose up -d
+```
+
+## Zipkin
+
+**Step 1:** Create directories and files
+
+```shell
+touch docker-compose.yml
+```
+
+**Step 2:** Fill in the contents of the file according to the example below
+
+> docker-compose.yml
+
+```yml
+version: '3'
+
+services:
+  zipkin:
+    restart: always
+    image: openzipkin/zipkin:3
+    container_name: zipkin3
+    environment:
+      - STORAGE_TYPE=elasticsearch
+      - ES_HOSTS=http://elasticsearch7:9200
+      - RABBIT_ADDRESSES=rabbitmq3:5672
+      - RABBIT_USER=rabbit
+      - RABBIT_PASSWORD=lucas
+    ports:
+      - '9411:9411'
 ```
 
 **Step 3:** Start container
