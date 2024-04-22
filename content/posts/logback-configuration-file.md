@@ -30,8 +30,8 @@ logback configuration file
 
     <include resource="org/springframework/boot/logging/logback/defaults.xml"/>
 
-    <property name="APP_NAME" value="app-name"/>
-    <property name="LOG_PATH" value="logs"/>
+    <springProperty name="APP_NAME" scope="context" source="spring.application.name"/>
+    <property name="LOG_PATH" value="logs/${APP_NAME}"/>
     <property name="LOG_FILE" value="${LOG_PATH}/${APP_NAME}.log"/>
     <property name="WARN_LOG_FILE" value="${LOG_PATH}/${APP_NAME}.warn.log"/>
     <property name="ERROR_LOG_FILE" value="${LOG_PATH}/${APP_NAME}.error.log"/>
