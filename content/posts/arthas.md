@@ -6,7 +6,7 @@ keywords: 'arthas'
 date: 2024-03-22T14:29:11+08:00
 
 categories:
-  - arthas
+  - Ops
 tags:
   - arthas
 ---

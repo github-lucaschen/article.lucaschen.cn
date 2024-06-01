@@ -6,10 +6,9 @@ keywords: '中文技术文档'
 date: 2023-01-01T21:46:25+08:00
 
 categories:
-  - guide
+  - Doc
 tags:
-  - reprint
-  - document
+  - Reprint
 ---
 
 中文技术文档的写作规范

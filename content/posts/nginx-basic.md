@@ -6,7 +6,7 @@ keywords: 'nginx'
 date: 2023-12-10T21:46:25+08:00
 
 categories:
-  - server
+  - Ops
 tags:
   - server
   - nginx

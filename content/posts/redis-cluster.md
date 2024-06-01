@@ -6,10 +6,9 @@ keywords: 'redis'
 date: 2023-01-05T21:46:25+08:00
 
 categories:
-  - server
+  - Ops
 tags:
-  - server
-  - redis
+  - Redis
 ---
 
 简述如何使用 docker-compose 搭建 3 主 3 从的 Redis 集群。

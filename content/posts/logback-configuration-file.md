@@ -1,104 +1,107 @@
 ---
-title: 'Logback Configuration File'
+title: 'Logback 如何配置'
 description: 'logback-configuration-file'
-keywords: 'logback,configuration,file'
+keywords: 'logback'
 
 date: 2024-03-08T15:11:57+08:00
 
 categories:
-  - logback
+  - Java
 tags:
-  - logback
-  - configuration
+  - Logback
 ---
 
-logback configuration file
+给出基础的示例，讲述如何配置 SpringBoot 默认日志实现 Logback 应该如何进行配置文件的配置
 
 <!--more-->
 
-## file location
+## 文件位置
 
 `/resources/logback-spring.xml`
 
-## file content
-
-> **You should change APP_NAME property to your project name.**
+## 配置内容
 
 ```xml
 <?xml version="1.0" encoding="utf-8" ?>
-<configuration>
-
+<configuration scan="true">
     <include resource="org/springframework/boot/logging/logback/defaults.xml"/>
 
-    <springProperty name="APP_NAME" scope="context" source="spring.application.name"/>
-    <property name="LOG_PATH" value="logs/${APP_NAME}"/>
-    <property name="LOG_FILE" value="${LOG_PATH}/${APP_NAME}.log"/>
-    <property name="WARN_LOG_FILE" value="${LOG_PATH}/${APP_NAME}.warn.log"/>
-    <property name="ERROR_LOG_FILE" value="${LOG_PATH}/${APP_NAME}.error.log"/>
+    <springProperty scope="context" name="log.path" source="logging.file.path"
+                    defaultValue="./logs"/>
+    <springProperty scope="context" name="spring.application.name"
+                    source="spring.application.name"/>
+    <springProperty scope="context" name="spring.profiles.active" source="spring.profiles.active"/>
+    <springProperty scope="context" name="log.level.console" source="logging.level.console"
+                    defaultValue="INFO"/>
+    <property name="FILE" value="${log.path}/${spring.application.name}"/>
 
-    <appender name="ROLLING_FILE"
-              class="ch.qos.logback.core.rolling.RollingFileAppender">
-        <file>${LOG_FILE}</file>
-        <encoder>
-            <pattern>${FILE_LOG_PATTERN}</pattern>
-            <charset class="java.nio.charset.Charset">UTF-8</charset>
-        </encoder>
-        <rollingPolicy class="ch.qos.logback.core.rolling.SizeAndTimeBasedRollingPolicy">
-            <fileNamePattern>${LOG_FILE}.%d{yyyy-MM-dd}.%i</fileNamePattern>
-            <maxHistory>7</maxHistory>
-            <maxFileSize>50MB</maxFileSize>
-            <totalSizeCap>500MB</totalSizeCap>
-        </rollingPolicy>
-    </appender>
-
-    <appender name="WARN_ROLLING_FILE"
-              class="ch.qos.logback.core.rolling.RollingFileAppender">
-        <file>${WARN_LOG_FILE}</file>
-        <encoder>
-            <pattern>${FILE_LOG_PATTERN}</pattern>
-            <charset class="java.nio.charset.Charset">UTF-8</charset>
-        </encoder>
-        <rollingPolicy class="ch.qos.logback.core.rolling.SizeAndTimeBasedRollingPolicy">
-            <fileNamePattern>${WARN_LOG_FILE}.%d{yyyy-MM-dd}.%i</fileNamePattern>
-            <maxHistory>7</maxHistory>
-            <maxFileSize>50MB</maxFileSize>
-            <totalSizeCap>500MB</totalSizeCap>
-        </rollingPolicy>
-        <filter class="ch.qos.logback.classic.filter.ThresholdFilter">
-            <level>WARN</level>
-        </filter>
-    </appender>
-
-    <appender name="ERROR_ROLLING_FILE"
-              class="ch.qos.logback.core.rolling.RollingFileAppender">
-        <file>${ERROR_LOG_FILE}</file>
-        <encoder>
-            <pattern>${FILE_LOG_PATTERN}</pattern>
-            <charset class="java.nio.charset.Charset">UTF-8</charset>
-        </encoder>
-        <rollingPolicy class="ch.qos.logback.core.rolling.SizeAndTimeBasedRollingPolicy">
-            <fileNamePattern>${ERROR_LOG_FILE}.%d{yyyy-MM-dd}.%i</fileNamePattern>
-            <maxHistory>7</maxHistory>
-            <maxFileSize>50MB</maxFileSize>
-            <totalSizeCap>500MB</totalSizeCap>
-        </rollingPolicy>
-        <filter class="ch.qos.logback.classic.filter.ThresholdFilter">
-            <level>ERROR</level>
-        </filter>
-    </appender>
-
-    <appender name="CONSOLE" class="ch.qos.logback.core.ConsoleAppender">
-        <encoder>
+    <!-- 控制台实时输出，采用高亮语法，用于开发环境 -->
+    <appender name="CONSOLE_APPENDER" class="ch.qos.logback.core.ConsoleAppender">
+        <encoder>·
             <pattern>${CONSOLE_LOG_PATTERN}</pattern>
+            <charset class="java.nio.charset.Charset">UTF·-8</charset>
+        </encoder>
+    </appender>
+
+
+    <!-- 整个项目的所有日志 -->
+    <appender name="ROOT_APPENDER" class="ch.qos.logback.core.rolling.RollingFileAppender">
+        <file>${FILE}/info.log</file>
+        <rollingPolicy class="ch.qos.logback.core.rolling.SizeAndTimeBasedRollingPolicy">
+            <!-- 每天一归档 -->·
+            <fileNamePattern>
+                ${log.path}/${spring.application.name}/%d{yyyy-MM}/root-%d{yyyy-MM-dd}-%i.log
+            </fileNamePattern>
+            <!-- 单个日志文件最多 100MB, 60 天的日志周期，最大不能超过 20GB -->
+            <maxFileSize>128MB</maxFileSize>
+            <maxHistory>60</maxHistory>
+            <totalSizeCap>20GB</totalSizeCap>
+        </rollingPolicy>
+        <encoder>
+            <pattern>${FILE_LOG_PATTERN}</pattern>
             <charset class="java.nio.charset.Charset">UTF-8</charset>
         </encoder>
     </appender>
 
-    <root level="INFO">
-        <appender-ref ref="CONSOLE"/>
-        <appender-ref ref="ROLLING_FILE"/>
-        <appender-ref ref="WARN_ROLLING_FILE"/>
-        <appender-ref ref="ERROR_ROLLING_FILE"/>
-    </root>
+    <!-- 共用异常包的日志 -->
+    <appender name="ERROR_APPENDER" class="ch.qos.logback.core.rolling.RollingFileAppender">
+        <file>${FILE}/error.log</file>
+        <rollingPolicy class="ch.qos.logback.core.rolling.SizeAndTimeBasedRollingPolicy">
+            <fileNamePattern>
+                ${log.path}/${spring.application.name}/%d{yyyy-MM}/error-%d{yyyy-MM-dd}-%i.log
+            </fileNamePattern>
+            <maxFileSize>128MB</maxFileSize>
+            <maxHistory>60</maxHistory>
+            <totalSizeCap>20GB</totalSizeCap>
+        </rollingPolicy>
+        <encoder>
+            <pattern>${FILE_LOG_PATTERN}</pattern>
+            <charset class="java.nio.charset.Charset">UTF-8</charset>
+        </encoder>
+        <!-- 此日志文档只记录 ERROR 级别的 -->
+        <filter class="ch.qos.logback.classic.filter.LevelFilter">
+            <level>ERROR</level>
+            <onMatch>ACCEPT</onMatch>
+            <onMismatch>DENY</onMismatch>
+        </filter>
+    </appender>
+
+    <!-- uat,prod -->
+    <springProfile name="=uat,prod">
+        <root level="${log.level.console}">
+            <appender-ref ref="ROOT_APPENDER"/>
+            <appender-ref ref="ERROR_APPENDER"/>
+        </root>
+    </springProfile>
+
+    <!-- dev,sit -->
+    <springProfile name="dev,sit">
+        <root level="${log.level.console}">
+            <appender-ref ref="CONSOLE_APPENDER"/>
+            <appender-ref ref="ROOT_APPENDER"/>
+            <appender-ref ref="ERROR_APPENDER"/>
+        </root>
+    </springProfile>
+
 </configuration>
 ```

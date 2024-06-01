@@ -1,18 +1,17 @@
 ---
-title: 'Use Docker Compose To Build Environment'
+title: 'Docker Compose 搭建相关开发环境'
 description: 'docker-compose'
 keywords: 'docker-compose'
 
 date: 2024-03-04T23:39:43+08:00
 
 categories:
-  - docker
+  - Docker
 tags:
-  - docker-compose
-  - build
+  - DockerCompose
 ---
 
-Use docker-compose to build various development environments.
+介绍如何使用 Docker-compose 快速搭建出相关的开发环境。
 
 <!--more-->
 

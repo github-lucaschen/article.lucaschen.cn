@@ -1,16 +1,15 @@
 ---
-title: 'Jackson Util'
-description: 'Jackson 封装 JsonUtil'
+title: 'Jackson 工具类'
+description: 'Jackson 封装 JsonUtils'
 keywords: 'jackson,json'
 
 date: 2023-12-17T21:46:25+08:00
 
 categories:
-  - java
-  - json
+  - Java
 tags:
-  - jackson
-  - json
+  - Jackson
+  - JSON
 ---
 
 Jackson 是 SpringMVC 默认的 JSON 解析器。为保证项目使用统一的结构和相同的返回值，将相关操作封装为工具类。
@@ -20,8 +19,7 @@ Jackson 是 SpringMVC 默认的 JSON 解析器。为保证项目使用统一的�
 ## 工具类代码
 
 ```java
-package com.**.**.utils;
-
+package com.**.**.util;
 
 import com.fasterxml.jackson.annotation.JsonInclude;
 import com.fasterxml.jackson.core.JsonParser;
@@ -31,6 +29,7 @@ import com.fasterxml.jackson.databind.DeserializationFeature;
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.SerializationFeature;
 import com.fasterxml.jackson.databind.json.JsonMapper;
+import com.fasterxml.jackson.databind.ser.std.ToStringSerializer;
 import com.fasterxml.jackson.datatype.jsr310.JavaTimeModule;
 import com.fasterxml.jackson.datatype.jsr310.deser.LocalDateTimeDeserializer;
 import com.fasterxml.jackson.datatype.jsr310.ser.LocalDateTimeSerializer;
@@ -40,20 +39,14 @@ import org.apache.commons.lang3.StringUtils;
 import java.text.SimpleDateFormat;
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
+import java.util.Collections;
 import java.util.List;
-import java.util.Map;
 import java.util.Objects;
-import java.util.Optional;
 
 @Slf4j
-public final class JsonUtil {
-
-    private JsonUtil() {
-        throw new IllegalStateException("cannot create instance of static util class");
-    }
+public final class JsonUtils {
 
     private static final String LOCAL_DATE_TIME_FORMAT = "yyyy-MM-dd HH:mm:ss";
-
     private static final JsonMapper jsonMapper = JsonMapper.builder()
             // disable -- fail on unknown properties
             // ({"id":null,"field":"value"} -> Object.builder.field(value).build())
@@ -66,9 +59,6 @@ public final class JsonUtil {
             // enable -- allow single quotes
             // ({'field':"value"})
             .configure(JsonParser.Feature.ALLOW_SINGLE_QUOTES, true)
-            // enable -- allow unquoted control chars
-            // ({"field":"value\n"})
-            .configure(JsonParser.Feature.ALLOW_UNQUOTED_CONTROL_CHARS, true)
             // enable -- allow unquoted field names
             // ({field:"value"})
             .configure(JsonParser.Feature.ALLOW_UNQUOTED_FIELD_NAMES, true)
@@ -81,9 +71,7 @@ public final class JsonUtil {
             // Set date formatting template
             // java.util.Date(new SimpleDateFormat("yyyy-MM-dd").parse("2024-01-01"))
             // --> String("2024-01-01 00:00:00")
-            .defaultDateFormat(new SimpleDateFormat(LOCAL_DATE_TIME_FORMAT))
-            .build();
-
+            .defaultDateFormat(new SimpleDateFormat(LOCAL_DATE_TIME_FORMAT)).build();
 
     static {
         // add Module "com.fasterxml.jackson.datatype:jackson-datatype-jsr310"
@@ -91,110 +79,132 @@ public final class JsonUtil {
         // set custom serializer and deserializer
         // to replace datetime format template [yyyy-MM-ddTHH:mm:ss] to [yyyy-MM-dd HH:mm:ss]
         final JavaTimeModule javaTimeModule = new JavaTimeModule();
-        final DateTimeFormatter dateTimeFormatter = DateTimeFormatter
-                .ofPattern(LOCAL_DATE_TIME_FORMAT);
+        final DateTimeFormatter dateTimeFormatter =
+                DateTimeFormatter.ofPattern(LOCAL_DATE_TIME_FORMAT);
         javaTimeModule.addSerializer(LocalDateTime.class,
                 new LocalDateTimeSerializer(dateTimeFormatter));
-        javaTimeModule.addDeserializer(LocalDateTime.class,
-                new LocalDateTimeDeserializer(dateTimeFormatter));
+        javaTimeModule.addDeserializer(LocalDateTime.class, new
+                LocalDateTimeDeserializer(dateTimeFormatter));
+
+        // 序列换成 json 时,将所有的 long 变成 string。因为 js 中的数字类型不能包含所有的 java long 值
+        javaTimeModule.addSerializer(Long.class, ToStringSerializer.instance);
+
         jsonMapper.registerModule(javaTimeModule);
     }
 
 
-    public static Optional<String> toJson(final Object object) {
-        if (Objects.nonNull(object)) {
-            try {
-                return Optional.of(jsonMapper.writeValueAsString(object));
-            } catch (JsonProcessingException e) {
-                log.error("JsonUtil toJson : {}", e);
+    private JsonUtils() {
+    }
+
+    public static <T> String to(final T object) {
+        if (Objects.isNull(object)) {
+            return null;
+        }
+        try {
+            return object instanceof String ? (String) object : jsonMapper.writeValueAsString(object);
+        } catch (JsonProcessingException e) {
+            log.error("JsonUtils::to({})", object, e);
+            return null;
+        }
+    }
+
+    public static <T> T to(final String json, final Class<T> clazz) {
+        if (StringUtils.isBlank(json) || Objects.isNull(clazz)) {
+            return null;
+        }
+        try {
+            return jsonMapper.readValue(json, clazz);
+        } catch (JsonProcessingException e) {
+            log.error("JsonUtils::to({}, {})", json, clazz, e);
+            return null;
+        }
+    }
+
+    public static <T> T to(final String json, final TypeReference<T> typeReference) {
+        if (StringUtils.isBlank(json) || Objects.isNull(typeReference)) {
+            return null;
+        }
+        try {
+            return jsonMapper.readValue(json, typeReference);
+        } catch (JsonProcessingException e) {
+            log.error("JsonUtils::to({}, {})", json, typeReference, e);
+            return null;
+        }
+    }
+
+    public static boolean isJson(final String json) {
+        if (StringUtils.isBlank(json)) {
+            return false;
+        }
+        try {
+            jsonMapper.readTree(json);
+            return true;
+        } catch (JsonProcessingException e) {
+            log.error("JsonUtils::isJson({})", json);
+            return false;
+        }
+    }
+
+    public static <T> String toPrettyPrinter(final T object) {
+        if (Objects.isNull(object)) {
+            return null;
+        }
+        try {
+            if (object instanceof String) {
+                return jsonMapper.writerWithDefaultPrettyPrinter()
+                        .writeValueAsString(jsonMapper.readTree(object.toString()));
+            } else {
+                return jsonMapper.writerWithDefaultPrettyPrinter().writeValueAsString(object);
             }
+        } catch (JsonProcessingException e) {
+            log.error("JsonUtils::to({})", object, e);
+            return null;
         }
-        return Optional.empty();
     }
 
-    public static <T> Optional<T> toObject(final String json, Class<T> clazz) {
-        if (StringUtils.isNoneBlank(json) && Objects.nonNull(clazz)) {
-            try {
-                return Optional.of(jsonMapper.readValue(json, clazz));
-            } catch (JsonProcessingException e) {
-                log.error("JsonUtil toObject : {}", e);
-            }
+    public static List<String> findText(final String json, final String fieldName) {
+        if (StringUtils.isBlank(json) || StringUtils.isBlank(fieldName)) {
+            return Collections.emptyList();
         }
-        return Optional.empty();
+        try {
+            return jsonMapper.readTree(json).findValuesAsText(fieldName);
+        } catch (JsonProcessingException e) {
+            log.error("JsonUtils::findText({}, {})", json, fieldName, e);
+            return Collections.emptyList();
+        }
     }
 
-    public static <T> Optional<T> toObject(final String json,
-                                           TypeReference<T> typeReference) {
-        if (StringUtils.isNoneBlank(json) && Objects.nonNull(typeReference)) {
-            try {
-                return Optional.of(jsonMapper.readValue(json, typeReference));
-            } catch (JsonProcessingException e) {
-                log.error("JsonUtil toObject : {}", e);
-            }
-        }
-        return Optional.empty();
+    public static String find(final String json, final String fieldName) {
+        return findText(json, fieldName).stream().findFirst().orElse(null);
     }
 
-    public static <T> Optional<T> toObject(final Map map, Class<T> clazz) {
-        if (MapUtils.isNotEmpty(map) && Objects.nonNull(clazz)) {
-            return Optional.of(jsonMapper.convertValue(map, clazz));
-        }
-        return Optional.empty();
-    }
-
-    @SuppressWarnings("rawtypes")
-    public static Optional<Map> toMap(final String json) {
+    public static JsonNode toTree(final String json) {
         if (StringUtils.isNoneBlank(json)) {
             try {
-                return Optional.ofNullable(jsonMapper.readValue(json,
-                        new TypeReference<Map<String, Object>>() {
-                        }));
+                return jsonMapper.readTree(json);
             } catch (JsonProcessingException e) {
-                log.error("JsonUtil toMap : {}", e);
+                log.error("JsonUtils::toTree({})", json, e);
+                return null;
             }
         }
-        return Optional.empty();
+        return null;
     }
 
-    @SuppressWarnings("rawtypes")
-    public static Optional<Map> toMap(final Object object) {
-        if (Objects.nonNull(object)) {
-            return Optional.of(jsonMapper.convertValue(object,
-                    new TypeReference<Map<String, Object>>() {
-                    }));
+    public static <T> T convert(final Object object, final Class<T> clazz) {
+        if (Objects.isNull(object) || Objects.isNull(clazz)) {
+            return null;
         }
-        return Optional.empty();
+        return jsonMapper.convertValue(object, clazz);
     }
 
-    public static <T> Optional<List<T>> toObjects(final String json, TypeReference<List<T>> typeReference) {
-        if (StringUtils.isNoneBlank(json) && Objects.nonNull(typeReference)) {
-            try {
-                return Optional.of(jsonMapper.readValue(json, typeReference));
-            } catch (JsonProcessingException e) {
-                log.error("JsonUtil toObjects : {}", e);
-            }
+    public static <T> T convert(final Object object, final TypeReference<T> typeReference) {
+        if (Objects.isNull(object) || Objects.isNull(typeReference)) {
+            return null;
         }
-        return Optional.empty();
-    }
-
-    public static Optional<JsonNode> toTree(final String json) {
-        if (StringUtils.isNoneBlank(json)) {
-            try {
-                return Optional.of(jsonMapper.readTree(json));
-            } catch (JsonProcessingException e) {
-                log.error("JsonUtil toTree : {}", e);
-            }
-        }
-        return Optional.empty();
+        return jsonMapper.convertValue(object, typeReference);
     }
 }
 ```
-
-### 为什么使用 Optional 作为返回值
-
-Java8 新增了 `Optional` 来处理空指针问题，这里作为工具类，在有可能返回 `null` 的情况下，不如直接返回 `Optional`。
-
-这样可以明确告知调用方，此处可能会有 `null`, 请增加相应处理逻辑。
 
 ## 解析代码
 
@@ -436,254 +446,10 @@ public final class JsonUtil {
         javaTimeModule.addDeserializer(LocalDateTime.class,
                 new LocalDateTimeDeserializer(dateTimeFormatter));
         jsonMapper.registerModule(javaTimeModule);
+
+        // 序列换成 json 时,将所有的 long 变成 string。因为 js 中的数字类型不能包含所有的 java long 值
+        javaTimeModule.addSerializer(Long.class, ToStringSerializer.instance);
     }
 ```
 
 为 `JsonMapper` 注册 `JavaTimeModule` 模块，处理 `LocalDateTime` 实现转换问题。
-
-### 方法
-
-#### toJson(final Object object)
-
-```java
-    public static Optional<String> toJson(final Object object) {
-        if (Objects.nonNull(object)) {
-            try {
-                return Optional.of(jsonMapper.writeValueAsString(object));
-            } catch (JsonProcessingException e) {
-                log.error("JsonUtil toJson : {}", e);
-            }
-        }
-        return Optional.empty();
-    }
-```
-
-测试方法:
-
-```java
-    @Test
-    void toJson() {
-        final ImmutableMap<String, String> immutableMap = ImmutableMap.of("k1", "v1", "k2", "v2");
-        final String immutableMapJson = JsonUtil.toJson(immutableMap).orElse("");
-        assertTrue(StringUtils.equals(immutableMapJson, "{\"k1\":\"v1\",\"k2\":\"v2\"}"));
-        final HashMap<String, String> hashMap = new HashMap<>();
-        hashMap.put("k1", "v1");
-        hashMap.put("k2", "v2");
-        final String hashMapJson = JsonUtil.toJson(hashMap).orElse("");
-        assertTrue(StringUtils.equals(hashMapJson, "{\"k1\":\"v1\",\"k2\":\"v2\"}"));
-        final UserPO admin = UserPO.builder().id(null).username("admin").password("admin").build();
-        final String json = JsonUtil.toJson(admin).orElse("");
-        assertEquals(json, "{\"username\":\"admin\",\"password\":\"admin\"}");
-    }
-```
-
-#### toObject(final String json, Class<T> clazz)
-
-```java
-    public static <T> Optional<T> toObject(final String json, Class<T> clazz) {
-        if (StringUtils.isNoneBlank(json) && Objects.nonNull(clazz)) {
-            try {
-                return Optional.of(jsonMapper.readValue(json, clazz));
-            } catch (JsonProcessingException e) {
-                log.error("JsonUtil toObject : {}", e);
-            }
-        }
-        return Optional.empty();
-    }
-```
-
-测试方法:
-
-```java
-    @Test
-    void toObject() {
-        final String json = "{\"id\":null,\"username\":\"username\",\"password\":\"password\"}";
-        final UserPO userPO = JsonUtil.toObject(json, UserPO.class).orElse(null);
-        assertTrue(Objects.nonNull(userPO));
-        assertNull(userPO.getId());
-        assertEquals("username", userPO.getUsername());
-        assertEquals("password", userPO.getPassword());
-    }
-```
-
-#### toObject(final String json, TypeReference<T> typeReference)
-
-```java
-    public static <T> Optional<T> toObject(final String json,
-                                           TypeReference<T> typeReference) {
-        if (StringUtils.isNoneBlank(json) && Objects.nonNull(typeReference)) {
-            try {
-                return Optional.of(jsonMapper.readValue(json, typeReference));
-            } catch (JsonProcessingException e) {
-                log.error("JsonUtil toObject : {}", e);
-            }
-        }
-        return Optional.empty();
-    }
-```
-
-测试方法:
-
-```java
-    @Test
-    void toObjectTypeReference() {
-        final String json = "{\"id\":null,\"username\":\"username\",\"password\":\"password\"}";
-        final UserPO userPO = JsonUtil.toObject(json, new TypeReference<UserPO>() {
-        }).orElse(null);
-        assertTrue(Objects.nonNull(userPO));
-        assertNull(userPO.getId());
-        assertEquals("username", userPO.getUsername());
-        assertEquals("password", userPO.getPassword());
-    }
-```
-
-#### toObject(final Map map, Class<T> clazz)
-
-```java
-    public static <T> Optional<T> toObject(final Map map, Class<T> clazz) {
-        if (MapUtils.isNotEmpty(map) && Objects.nonNull(clazz)) {
-            return Optional.of(jsonMapper.convertValue(map, clazz));
-        }
-        return Optional.empty();
-    }
-```
-
-测试代码:
-
-```java
-    @Test
-    void toObjectFromMap() {
-        final ImmutableMap<String, String> immutableMap = ImmutableMap
-                .of("k2", "v2", "username", "username", "password", "password");
-        final UserPO userPO = JsonUtil.toObject(immutableMap, UserPO.class).orElse(null);
-        assertTrue(Objects.nonNull(userPO));
-        assertNull(userPO.getId());
-        assertEquals("username", userPO.getUsername());
-        assertEquals("password", userPO.getPassword());
-    }
-```
-
-#### toMap(final String json)
-
-```java
-    @SuppressWarnings("rawtypes")
-    public static Optional<Map> toMap(final String json) {
-        if (StringUtils.isNoneBlank(json)) {
-            try {
-                return Optional.ofNullable(jsonMapper.readValue(json,
-                        new TypeReference<Map<String, Object>>() {
-                        }));
-            } catch (JsonProcessingException e) {
-                log.error("JsonUtil toMap : {}", e);
-            }
-        }
-        return Optional.empty();
-    }
-```
-
-测试方法:
-
-```java
-    @Test
-    void toMap() {
-        final String json = "{\"id\":null,\"username\":\"username\",\"password\":\"password\"}";
-        final Map map = JsonUtil.toMap(json).orElse(null);
-        assertTrue(Objects.nonNull(map));
-        assertNull(map.get("id"));
-        assertEquals("username", map.get("username"));
-        assertEquals("password", map.get("password"));
-    }
-```
-
-#### toMap(final Object object)
-
-```java
-    @SuppressWarnings("rawtypes")
-    public static Optional<Map> toMap(final Object object) {
-        if (Objects.nonNull(object)) {
-            return Optional.of(jsonMapper.convertValue(object,
-                    new TypeReference<Map<String, Object>>() {
-                    }));
-        }
-        return Optional.empty();
-    }
-```
-
-测试代码:
-
-```java
-    @Test
-    void toMapFromObject() {
-        final UserPO admin1 = UserPO.builder().id(null).username("username").password("password").build();
-        final Map map = JsonUtil.toMap(admin1).orElse(null);
-        assertTrue(Objects.nonNull(map));
-        assertNull(map.get("id"));
-        assertEquals("username", map.get("username"));
-        assertEquals("password", map.get("password"));
-    }
-```
-
-#### toObjects(final String json, TypeReference<List<T>> typeReference)
-
-```java
-    public static <T> Optional<List<T>> toObjects(final String json, TypeReference<List<T>> typeReference) {
-        if (StringUtils.isNoneBlank(json) && Objects.nonNull(typeReference)) {
-            try {
-                return Optional.of(jsonMapper.readValue(json, typeReference));
-            } catch (JsonProcessingException e) {
-                log.error("JsonUtil toObjects : {}", e);
-            }
-        }
-        return Optional.empty();
-    }
-```
-
-测试方法:
-
-```java
-   @Test
-    void toObjects() {
-        final UserPO admin1 = UserPO.builder().username("admin1").password("admin1").build();
-        final UserPO admin2 = UserPO.builder().username("admin2").password("admin2").build();
-        final UserPO admin3 = UserPO.builder().username("admin3").password("admin3").build();
-        final ImmutableList<UserPO> userPOs = ImmutableList.of(admin1, admin2, admin3);
-        final String json = JsonUtil.toJson(userPOs).orElse("");
-        assertTrue(StringUtils.isNoneBlank(json));
-        final List<UserPO> userPOList = JsonUtil.toObjects(json, new TypeReference<List<UserPO>>() {
-        }).orElse(Collections.emptyList());
-        assertTrue(CollectionUtils.isNotEmpty(userPOList));
-        assertTrue(CollectionUtils.isEqualCollection(userPOs, userPOList));
-    }
-```
-
-#### toTree(final String json)
-
-```java
-   public static Optional<JsonNode> toTree(final String json) {
-        if (StringUtils.isNoneBlank(json)) {
-            try {
-                return Optional.of(jsonMapper.readTree(json));
-            } catch (JsonProcessingException e) {
-                log.error("JsonUtil toTree : {}", e);
-            }
-        }
-        return Optional.empty();
-    }
-```
-
-测试方法:
-
-```java
-    @Test
-    void toTree() {
-        final String json = "{\"id\":null,\"username\":\"username\",\"password\":\"password\"}";
-        final JsonNode jsonNode = JsonUtil.toTree(json).orElse(null);
-        assertTrue(Objects.nonNull(jsonNode));
-        final JsonNode idNode = jsonNode.get("id");
-        assertTrue(idNode.isNull());
-        final JsonNode usernameNode = jsonNode.get("username");
-        assertTrue(StringUtils.equals("username", usernameNode.textValue()));
-        final JsonNode passwordNode = jsonNode.get("password");
-        assertTrue(StringUtils.equals("password", passwordNode.textValue()));
-    }
-```

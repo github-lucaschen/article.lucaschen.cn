@@ -1,39 +1,30 @@
 ---
-title: 'Thread Poll'
-description: 'thread-poll'
-keywords: 'thread,poll'
+title: '线程池配置'
+description: 'Java 线程池配置'
+keywords: 'thread'
 
 date: 2024-03-08T14:22:18+08:00
 
 categories:
-  - thread
+  - Java
 tags:
-  - thread
-  - async
+  - Thread
+  - Async
 ---
 
-Configure using thread pool
+介绍如何配置和使用线程池。
 
 <!--more-->
 
-## How to configure
+## 如何配置
 
-> application.yaml
-
-```yaml
-thread:
-  pool:
-    core-pool-size: 8
-    max-pool-size: 20
-    queue-capacity: 100
-    name-prefix: thread-pool-
-    keep-alive-seconds: 60
-```
+### 配置类
 
 > ThreadPoolConfig.java
 
 ```java
-import lombok.Data;
+import lombok.Getter;
+import lombok.Setter;
 import org.springframework.boot.context.properties.ConfigurationProperties;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
@@ -43,53 +34,65 @@ import org.springframework.scheduling.concurrent.ThreadPoolTaskExecutor;
 
 import java.util.concurrent.ThreadPoolExecutor;
 
-@Data
+@Getter
+@Setter
 @EnableAsync
 @Configuration
-@ConfigurationProperties("thread.pool")
+@ConfigurationProperties("system.thread.pool")
 public class ThreadPoolConfig {
-    private int corePoolSize;
-    private int maxPoolSize;
-    private int queueCapacity;
-    private String namePrefix;
-    private int keepAliveSeconds;
 
     /**
-     * when a task is added to the thread pool through execute(Runnable) method:
-     * <p>
-     * 1. if thread-pool's thread number is less than <strong>corePoolSize</strong> at this time,
-     * even if all threads in the thread pool are idle,
-     * new threads will be created to handle the added tasks.
-     * 2. if thread-pool's thread number is equals than <strong>corePoolSize</strong> at this time,
-     * but the buffer queue <strong>workQueue</strong> is not full,
-     * the task is put into the buffer queue.
-     * 3. if thread-pool's thread number is equals than <strong>corePoolSize</strong> at this time,
-     * and the buffer queue <strong>workQueue</strong> is full,
-     * but thread-pool's thread number is less than <strong>maxPoolSize</strong>,
-     * new threads will be created to handle the added tasks.
-     * 4. if thread-pool's thread number is equals than <strong>corePoolSize</strong> at this time,
-     * and the buffer queue <strong>workQueue</strong> is full,
-     * and thread-pool's thread number is equals than <strong>maxPoolSize</strong>,
-     * then handle this task through the strategy specified by <strong>maxPoolSize</strong>
-     * <p>
-     * That is to say:
-     * The priority of processing tasks is:
-     * 1. corePoolSize
-     * 2. workQueue
-     * 3. maxPoolSize
-     * <p>
-     * If all three are full, use <strong>maxPoolSize</strong> to handle rejected tasks
-     *
-     * @return Custom TaskExecutor
+     * 如果提交任务后线程还在运行，当线程数小于 corePoolSize 值时，
+     * 无论线程池中的线程是否忙碌，都会创建线程，
+     * 并把任务交给此新创建的线程进行处理，
+     * 如果线程数少于等于 corePoolSize，那么这些线程不会回收，除非将 allowCoreThreadTimeOut 设置为 true，
+     * 但一般不这么干，因为频繁地创建销毁线程会极大地增加系统调用的开销
      */
+    private int corePoolSize = 100;
+
+    /**
+     * 如果线程数大于核心数（corePoolSize）且小于最大线程数（maximumPoolSize），
+     * 则会将任务先丢到阻塞队列里，然后线程自己去阻塞队列中拉取任务执行
+     */
+    private int queueCapacity = 1000;
+
+    /**
+     * 线程池中最大可创建的线程数，如果提交任务时队列满了且线程数未到达这个设定值，则会创建线程并执行此次提交的任务，
+     * 如果提交任务时队列满了但线池数已经到达了这个值，此时说明已经超出了线池程的负载能力，就会执行拒绝策略，
+     * 不能让源源不断地任务进来把线程池给压垮了吧，首先要保证线程池能正常工作
+     */
+    private int maxPoolSize = 500;
+
+    /**
+     * 线程名称前缀
+     */
+    private String threadNamePrefix = "thread-pool-executor-";
+
+    /**
+     * 线程存活时间，如果在此时间内超出 corePoolSize 大小的线程处于 idle 状态，这些线程会被回收
+     */
+    private int keepAliveSeconds = 60;
+
     @Bean
     public TaskExecutor taskExecutor() {
+        // 通过 Runtime 方法来获取当前服务器 CPU 内核数量，根据 CPU 内核数量来创建核心线程数和最大线程数
+        int threadCount = Runtime.getRuntime().availableProcessors();
         final ThreadPoolTaskExecutor threadPoolTaskExecutor = new ThreadPoolTaskExecutor();
-        threadPoolTaskExecutor.setCorePoolSize(corePoolSize);
-        threadPoolTaskExecutor.setMaxPoolSize(maxPoolSize);
+        threadPoolTaskExecutor.setCorePoolSize(Math.min(threadCount, corePoolSize));
+        threadPoolTaskExecutor.setMaxPoolSize(Math.min(threadCount, maxPoolSize));
         threadPoolTaskExecutor.setQueueCapacity(queueCapacity);
-        threadPoolTaskExecutor.setThreadNamePrefix(namePrefix);
+        threadPoolTaskExecutor.setThreadNamePrefix(threadNamePrefix);
         threadPoolTaskExecutor.setKeepAliveSeconds(keepAliveSeconds);
+        /**
+         * 此处的拒绝策略总共可以有 4 种，分别为：
+         *
+         * 1. AbortPolicy：丢弃任务并抛出异常，这也是默认策略
+         * 2. CallerRunsPolicy：用调用者所在的线程来执行任务
+         * 如果用的是 CallerRunsPolicy 策略，提交任务的线程（比如主线程）提交任务后并不能保证马上就返回，
+         * 当触发了这个 reject 策略不得不亲自来处理这个任务
+         * 3. DiscardOldestPolicy：丢弃阻塞队列中靠最前的任务，并执行当前任务
+         * 4. DiscardPolicy：直接丢弃任务，不抛出任何异常，这种策略只适用于不重要的任务
+         */
         threadPoolTaskExecutor.setRejectedExecutionHandler(new ThreadPoolExecutor.CallerRunsPolicy());
         threadPoolTaskExecutor.setWaitForTasksToCompleteOnShutdown(true);
         threadPoolTaskExecutor.setAwaitTerminationSeconds(60);
@@ -99,9 +102,30 @@ public class ThreadPoolConfig {
 
 ```
 
-## How to use
+### 配置文件
 
-### Use ThreadPollTaskExecutor
+> application.yaml
+
+配置类中已经设置了相关默认值，如果配置文件中无相关配置项，则会使用默认配置。
+
+```yaml
+system:
+  thread:
+    pool:
+      core-pool-size: 100
+      max-pool-size: 500
+      queue-capacity: 1000
+      thread-name-prefix: thread-pool-
+      keep-alive-seconds: 60
+```
+
+### 为什么不允许使用 Executors 快速创建线程池？
+
+使用 Executors 快速生成的线程池没有完整的参数配置，`newCachedThreadPool` 方法的最大线程数设置成了 `Integer.MAX_VALUE`，而 `newSingleThreadExecutor` 方法创建 `workQueue` 时 `LinkedBlockingQueue` 未声明大小，相当于创建了无界队列，一不小心就会导致 OOM。
+
+## 如何使用
+
+### 手动调用线程池
 
 ```java
 import org.springframework.scheduling.concurrent.ThreadPoolTaskExecutor;
@@ -123,9 +147,9 @@ class ThreadTest {
 }
 ```
 
-### Use @Async
+### 使用 @Async 注解
 
-Step1: Add the EnableAsync annotation to the startup class to enable the asynchronous calling function
+Step1: 在启动类上增加 `@EnableAsync` 注解开启异步方法调用
 
 ```java
 @SpringBootApplication
@@ -137,7 +161,7 @@ public class Application {
 }
 ```
 
-Step2: Define and implement related methods
+Step2: 定义和实现相关方法，在方法实现上增加 `@Async` 注解
 
 ```java
 import java.util.concurrent.Future;
@@ -178,7 +202,7 @@ public class ThreadServiceImpl implements ThreadService {
 }
 ```
 
-Step3: Call test
+Step3: 测试调用
 
 ```java
 import org.junit.jupiter.api.Test;

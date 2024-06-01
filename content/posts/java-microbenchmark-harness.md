@@ -6,11 +6,10 @@ keywords: 'java,jmh'
 date: 2023-12-10T21:46:25+08:00
 
 categories:
-  - test
-  - jmh
+  - Java
 tags:
-  - test
-  - jmh
+  - Test
+  - JMH
 ---
 
 JMH is a Java harness for building, running, and analysing nano/micro/milli/macro benchmarks written in Java and other languages targeting the JVM.

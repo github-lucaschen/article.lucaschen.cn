@@ -1,18 +1,18 @@
 ---
 title: 'Network and Load Balance'
-description: 'network-and-balance'
+description: '网络和负载均衡'
 keywords: 'network,load balance'
 
 date: 2024-03-17T12:50:00+08:00
 
 categories:
-  - network
+  - Doc
 tags:
-  - network
-  - load balance
+  - Network
+  - LoadBalance
 ---
 
-网络分层，负载均衡。
+记录不同的网络分层，和负载均衡。
 
 <!--more-->
 

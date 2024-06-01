@@ -1,18 +1,17 @@
 ---
-title: 'UML Class'
-description: 'UML class'
-keywords: 'UML,class'
+title: 'UML 类图'
+description: 'UML'
+keywords: 'UML'
 
 date: 2024-03-20T10:57:32+08:00
 
 categories:
-  - UML
+  - Doc
 tags:
   - UML
-  - Class
 ---
 
-UML 类图解析。
+UML 类图解析和对应的 PlantUML 效果实现。
 
 <!--more-->
 

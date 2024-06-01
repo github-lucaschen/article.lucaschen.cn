@@ -6,9 +6,8 @@ keywords: 'OGNL'
 date: 2023-10-25T21:46:25+08:00
 
 categories:
-  - language
+  - Doc
 tags:
-  - language
   - OGNL
 ---
 

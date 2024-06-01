@@ -1,19 +1,19 @@
 ---
 title: 'Junit5 使用手册'
-description: 'Java 基准测试'
+description: 'Java 测试相关'
 keywords: 'java,junit5'
 
 date: 2023-12-10T21:46:25+08:00
 
 categories:
-  - java
+  - Java
 tags:
-  - reprint
-  - java
-  - junit5
+  - Reprint
+  - Test
+  - Junit5
 ---
 
-Junit5 简单使用手册
+Junit5 简单使用手册。
 
 <!--more-->
 

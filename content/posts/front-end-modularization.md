@@ -6,12 +6,11 @@ keywords: '前端模块化,front-end'
 date: 2023-01-08T21:46:25+08:00
 
 categories:
-  - front-end
+  - Doc
 tags:
-  - reprint
-  - unknown
-  - front-end
-  - module
+  - Reprint
+  - Unknown
+  - FrontEnd
 ---
 
 前端模块化详解

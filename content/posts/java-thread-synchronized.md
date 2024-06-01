@@ -6,11 +6,9 @@ keywords: 'java,thread'
 date: 2024-03-18T09:52:48+08:00
 
 categories:
-  - thread
+  - Java
 tags:
-  - java
-  - thread
-  - synchronized
+  - Synchronized
 ---
 
 Synchronized 关键字相关。

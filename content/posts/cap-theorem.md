@@ -6,12 +6,12 @@ keywords: 'cap,theorem'
 date: 2024-03-21T14:47:43+08:00
 
 categories:
-  - CAP
+  - Doc
 tags:
   - CAP
 ---
 
-CAP 定理。
+记录什么是CAP 定理。
 
 <!--more-->
 

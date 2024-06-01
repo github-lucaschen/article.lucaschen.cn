@@ -6,11 +6,9 @@ keywords: '初始化,服务器'
 date: 2023-01-03T21:46:25+08:00
 
 categories:
-  - configuration
+  - Ops
 tags:
-  - server
-  - configuration
-  - centos 7
+  - Server
 ---
 
 After reinstalling the system, initialize the centos 7 system.

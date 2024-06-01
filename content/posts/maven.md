@@ -3,15 +3,14 @@ title: 'Maven'
 description: 'Maven 相关知识总结'
 keywords: 'maven'
 
-date: 2023-01-6T21:46:25+08:00
+date: 2023-01-06T21:46:25+08:00
 
 categories:
-  - java
+  - Java
 tags:
-  - reprint
-  - unknown
-  - java
-  - maven
+  - Reprint
+  - Unknown
+  - Maven
 ---
 
 Maven 相关知识总结。
@@ -26,7 +25,6 @@ Maven 相关知识总结。
 6. 继承
 
 <!--more-->
-
 
 ## 1. 配置
 

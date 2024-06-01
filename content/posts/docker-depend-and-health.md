@@ -6,10 +6,10 @@ keywords: 'docker,服务依赖,健康检查'
 date: 2024-06-01T02:23:14+08:00
 
 categories:
-  - docker
+  - Docker
 tags:
-  - depends_on
-  - healthcheck
+  - DependsOn
+  - HealthCheck
 ---
 
 介绍 Docker Compose 服务依赖和健康检查相关知识。

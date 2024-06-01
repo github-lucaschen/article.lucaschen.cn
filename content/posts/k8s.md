@@ -6,13 +6,13 @@ keywords: 'k8s'
 date: 2024-03-13T22:25:52+08:00
 
 categories:
-  - k8s
+  - Ops
 tags:
-  - k8s
-  - docker
+  - K8s
+  - Docker
 ---
 
-部署使用 k8s 平台。
+介绍如何部署使用 k8s 平台。
 
 <!--more-->
 
